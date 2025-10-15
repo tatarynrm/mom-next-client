@@ -2,7 +2,7 @@
 import axios from "axios";
 import { toast } from "sonner";
 export const API_BASE_URL = 'https://api.mira-notes.site'
-// export const API_BASE_URL = 'http://localhost:5004'
+// export const API_BASE_URL = "http://localhost:5004";
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || API_BASE_URL,
   headers: {
@@ -41,12 +41,9 @@ api.interceptors.response.use(
     const message =
       error.response?.data?.message || error.message || "Помилка запиту";
 
-    console.log(error);
     if (error.response.data.statusCode === 403) {
       return null;
     }
-
-    console.log(message, "message");
 
     toast.error(message);
     return Promise.reject(error);

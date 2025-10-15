@@ -58,7 +58,9 @@ export function EditTransportation({
 
   const onSubmit = async (formData: TransportationFormData) => {
     try {
-      await api.patch(`/transportations/${data.id}`, formData);
+      const response = await api.patch(`/transportations/${data.id}`, formData);
+
+
       reset(formData);
       setOpen(false);
       if (onSuccess) onSuccess();

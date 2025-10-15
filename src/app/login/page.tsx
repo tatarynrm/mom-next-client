@@ -37,14 +37,15 @@ export default function LoginPage() {
     resolver: zodResolver(loginSchema),
   });
 
+
   const onSubmit = async (data: LoginFormInputs) => {
     setLoading(true);
     try {
-      console.log(data, "data");
+  
 
       //   const res = await api.post("/auth/login", data);
       const res = login(data.email, data.password);
-      console.log(res, "RES");
+   
 
       // toast.success("Ви успішно увійшли!");
       // router.replace("/dashboard");

@@ -4,14 +4,25 @@ import { useState } from "react";
 import Link from "next/link";
 import { Menu, X } from "lucide-react"; // іконки для гамбургера
 import ThemeSwitcher from "../ui/switchers/ThemeSwitcher";
+import { usePathname } from "next/navigation"; // використання usePathname
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname(); // отримуємо поточний шлях
 
   const navLinks = [
     { label: "Головна", href: "/dashboard" },
     { label: "Перевезення", href: "/dashboard/transportations" },
+    { label: "Корисна сторінка", href: "/dashboard/usefull" },
   ];
+
+  // Функція для перевірки активного лінка
+  const getLinkClass = (href: string) => {
+    const isActive = pathname === href;
+    return isActive
+      ? "text-blue-500 dark:text-blue-400" // активний лінк
+      : "text-gray-700 dark:text-gray-200 hover:text-blue-500 transition-colors"; // неактивний лінк
+  };
 
   return (
     <header className="bg-white dark:bg-gray-900 shadow-md sticky top-0 z-50">
@@ -33,7 +44,7 @@ export default function Header() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="text-gray-700 dark:text-gray-200 hover:text-blue-500 transition-colors"
+                className={getLinkClass(link.href)} // використовуємо getLinkClass для підсвічування активного посилання
               >
                 {link.label}
               </Link>
@@ -61,7 +72,7 @@ export default function Header() {
                 key={link.href}
                 href={link.href}
                 onClick={() => setIsOpen(false)}
-                className="text-gray-700 dark:text-gray-200 hover:text-blue-500 transition-colors"
+                className={getLinkClass(link.href)} // підсвічуємо активне посилання в мобільному меню
               >
                 {link.label}
               </Link>

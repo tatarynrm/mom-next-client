@@ -83,7 +83,7 @@ export default function TransportationsPage() {
               <th className="p-3 text-left whitespace-nowrap">Ціна</th>
               <th className="p-3 text-left whitespace-nowrap">Маржа</th>
               <th className="p-3 text-left whitespace-nowrap">Статус</th>
-              <th className="p-3 text-left whitespace-nowrap">Редагувати</th>
+              <th className="p-3 text-left whitespace-nowrap">Дії</th>
             </tr>
           </thead>
           <tbody>
