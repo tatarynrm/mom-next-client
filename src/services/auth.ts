@@ -1,4 +1,5 @@
 // services/auth.ts
+import { API_BASE_URL } from "@/shared/api/instance";
 import axios from "axios";
 
 export interface LoginResponse {
@@ -7,7 +8,7 @@ export interface LoginResponse {
 
 export async function login(email: string, password: string) {
   const response = await axios.post<LoginResponse>(
-    "https://api.mira-notes.site/auth/login", // твій NestJS сервер
+    `${API_BASE_URL}/auth/login`, // твій NestJS сервер
     { email, password },
     {
       withCredentials: true, // обов'язково, щоб браузер відправив/прийняв cookie
@@ -21,7 +22,7 @@ export async function login(email: string, password: string) {
 }
 export async function getMe() {
   const token = localStorage.getItem("accessToken");
-  const response = await axios.get("https://api.mira-notes.site/auth/me", {
+  const response = await axios.get(`${API_BASE_URL}/auth/me`, {
     headers: { Authorization: `Bearer ${token}` },
     withCredentials: true, // якщо refresh token використовується
   });

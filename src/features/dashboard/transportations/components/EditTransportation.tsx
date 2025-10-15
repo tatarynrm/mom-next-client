@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
@@ -50,6 +50,7 @@ export function EditTransportation({
     reset,
     setValue,
     watch,
+    control,
   } = useForm<TransportationFormData>({
     resolver: zodResolver(transportationSchema),
     defaultValues,
@@ -87,16 +88,22 @@ export function EditTransportation({
               <label className="block mb-1 font-medium">Дата вантажу</label>
               <Input type="date" {...register("cargo_date")} />
               {errors.cargo_date && (
-                <p className="text-red-500 text-sm">{errors.cargo_date.message}</p>
+                <p className="text-red-500 text-sm">
+                  {errors.cargo_date.message}
+                </p>
               )}
             </div>
 
             {/* Місце відправлення */}
             <div>
-              <label className="block mb-1 font-medium">Місце відправлення</label>
+              <label className="block mb-1 font-medium">
+                Місце відправлення
+              </label>
               <Input {...register("location_from")} />
               {errors.location_from && (
-                <p className="text-red-500 text-sm">{errors.location_from.message}</p>
+                <p className="text-red-500 text-sm">
+                  {errors.location_from.message}
+                </p>
               )}
             </div>
 
@@ -105,7 +112,9 @@ export function EditTransportation({
               <label className="block mb-1 font-medium">Місце прибуття</label>
               <Input {...register("location_to")} />
               {errors.location_to && (
-                <p className="text-red-500 text-sm">{errors.location_to.message}</p>
+                <p className="text-red-500 text-sm">
+                  {errors.location_to.message}
+                </p>
               )}
             </div>
 
@@ -132,14 +141,19 @@ export function EditTransportation({
               <label className="block mb-1 font-medium">Власник авто</label>
               <Input {...register("truck_owner")} />
               {errors.truck_owner && (
-                <p className="text-red-500 text-sm">{errors.truck_owner.message}</p>
+                <p className="text-red-500 text-sm">
+                  {errors.truck_owner.message}
+                </p>
               )}
             </div>
 
             {/* Ціна */}
             <div>
               <label className="block mb-1 font-medium">Ціна</label>
-              <Input type="number" {...register("price", { valueAsNumber: true })} />
+              <Input
+                type="number"
+                {...register("price", { valueAsNumber: true })}
+              />
               {errors.price && (
                 <p className="text-red-500 text-sm">{errors.price.message}</p>
               )}
@@ -148,7 +162,10 @@ export function EditTransportation({
             {/* Маржа */}
             <div>
               <label className="block mb-1 font-medium">Маржа</label>
-              <Input type="number" {...register("cost", { valueAsNumber: true })} />
+              <Input
+                type="number"
+                {...register("cost", { valueAsNumber: true })}
+              />
               {errors.cost && (
                 <p className="text-red-500 text-sm">{errors.cost.message}</p>
               )}
@@ -157,25 +174,26 @@ export function EditTransportation({
             {/* Статус */}
             <div>
               <label className="block mb-1 font-medium">Статус</label>
-              <Select
-                onValueChange={(val) =>
-                  setValue("status", Number(val), { shouldValidate: true })
-                }
-                defaultValue={watch("status")?.toString()}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Оберіть статус" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="1">Активна</SelectItem>
-                  <SelectItem value="2">Очікую</SelectItem>
-                  <SelectItem value="3">Не оплачена</SelectItem>
-                  <SelectItem value="4">Завершена</SelectItem>
-                </SelectContent>
-              </Select>
-              {errors.status && (
-                <p className="text-red-500 text-sm">{errors.status.message}</p>
-              )}
+              <Controller
+                name="status"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    onValueChange={(val) => field.onChange(Number(val))}
+                    value={field.value?.toString()}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Оберіть статус" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="1">Активна</SelectItem>
+                      <SelectItem value="2">Очікую</SelectItem>
+                      <SelectItem value="3">Не оплачена</SelectItem>
+                      <SelectItem value="4">Завершена</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
             </div>
 
             {/* Коментар на всю ширину */}
@@ -186,7 +204,11 @@ export function EditTransportation({
           </div>
 
           <div className="flex justify-end gap-2 mt-4">
-            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setOpen(false)}
+            >
               Скасувати
             </Button>
             <Button type="submit">Зберегти</Button>
