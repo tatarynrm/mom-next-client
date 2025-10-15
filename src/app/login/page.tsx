@@ -24,7 +24,7 @@ const loginSchema = z.object({
 type LoginFormInputs = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
-     const { user, login, loading:loadingAuth } = useAuthContext();
+  const { user, login, loading: loadingAuth } = useAuthContext();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -42,10 +42,12 @@ export default function LoginPage() {
     try {
       console.log(data, "data");
 
-    //   const res = await api.post("/auth/login", data);
-      login(data.email,data.password)
-      toast.success("Ви успішно увійшли!");
-      router.replace("/dashboard");
+      //   const res = await api.post("/auth/login", data);
+      const res = login(data.email, data.password);
+      console.log(res, "RES");
+
+      // toast.success("Ви успішно увійшли!");
+      // router.replace("/dashboard");
     } catch (err) {
       // toast помилка вже обробляється в інстансі
     } finally {
