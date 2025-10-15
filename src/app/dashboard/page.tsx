@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/providers/AuthProvider";
 import api from "@/shared/api/instance";
@@ -11,6 +11,7 @@ interface MonthlyEarning {
   month: number;
   total: number;
 }
+
 const monthNames = [
   "Січень",
   "Лютий",
@@ -25,6 +26,7 @@ const monthNames = [
   "Листопад",
   "Грудень",
 ];
+
 export default function Dashboard() {
   const { user, logout, loading } = useAuthContext();
   const router = useRouter();
@@ -33,8 +35,11 @@ export default function Dashboard() {
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const limit = 10;
+  const totalPages = Math.ceil(total / limit);
 
-  const fetchEarnings = async () => {
+  // Функція для завантаження даних
+  const fetchEarnings = useCallback(async () => {
+    if (!user) return; // захист від виклику без користувача
     try {
       const res = await api.get(
         `/transportations/monthly-earnings?page=${page}&limit=${limit}`
@@ -44,19 +49,21 @@ export default function Dashboard() {
     } catch (err) {
       console.error(err);
     }
-  };
+  }, [user, page]);
 
+  // Редирект на login якщо користувача немає
   useEffect(() => {
     if (!loading && !user) {
       router.push("/login");
     }
   }, [loading, user, router]);
 
+  // Завантаження даних після того як user підтверджений
   useEffect(() => {
-    if (user) fetchEarnings();
-  }, [user, page]);
-
-  const totalPages = Math.ceil(total / limit);
+    if (!loading && user) {
+      fetchEarnings();
+    }
+  }, [loading, user, page, fetchEarnings]);
 
   if (loading) {
     return (
@@ -64,6 +71,10 @@ export default function Dashboard() {
         Завантаження...
       </div>
     );
+  }
+
+  if (!user) {
+    return null; // ранній return поки редиректиться
   }
 
   return (
@@ -77,7 +88,7 @@ export default function Dashboard() {
 
       <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
         <p className="text-lg">
-          Привіт, <span className="font-semibold">{user?.email}</span>
+          Привіт, <span className="font-semibold">{user.email}</span>
         </p>
         <p className="text-sm text-muted-foreground mt-1">
           Тут відображаються заробітки по місяцях.
@@ -94,7 +105,7 @@ export default function Dashboard() {
             </tr>
           </thead>
           <tbody>
-            {earnings.map((e, i) => (
+            {earnings.map((e) => (
               <tr
                 key={`${e.year}-${e.month}`}
                 className="border-t hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors"
@@ -104,6 +115,13 @@ export default function Dashboard() {
                 <td className="p-3">{Number(e.total).toLocaleString()} грн</td>
               </tr>
             ))}
+            {earnings.length === 0 && (
+              <tr>
+                <td colSpan={3} className="p-3 text-center text-gray-500">
+                  Дані відсутні
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
@@ -120,12 +138,12 @@ export default function Dashboard() {
         </Button>
 
         <span className="text-sm sm:text-base">
-          Сторінка {page} з {totalPages}
+          Сторінка {page} з {totalPages || 1}
         </span>
 
         <Button
           variant="outline"
-          disabled={page === totalPages}
+          disabled={page === totalPages || totalPages === 0}
           onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
           className="w-full sm:w-auto"
         >
